@@ -1,52 +1,54 @@
 import React, { useState } from "react";
 import "./App.css";
 
-const choices = ["가위", "바위", "보"];
-
-const isWin = (me, other) => {
-  if (me === "가위" && other === "보") return true;
-  if (me === "바위" && other === "가위") return true;
-  if (me === "보" && other === "바위") return true;
-  return false;
-};
-
 function App() {
-  const [myChoice, setMyChoice] = useState(null);
-  const [winCount, setWinCount] = useState(0);
+  const choices = ["가위", "바위", "보"];
+  const [playerChoice, setPlayerChoice] = useState("");
+  const [computerChoice, setComputerChoice] = useState("");
+  const [result, setResult] = useState("");
 
-  const handleChoice = (choice) => {
-    setMyChoice(choice);
+  const determineWinner = (player, computer) => {
+    if (player === computer) {
+      setResult("비겼습니다!");
+    } else if (
+      (player === "가위" && computer === "보") ||
+      (player === "바위" && computer === "가위") ||
+      (player === "보" && computer === "바위")
+    ) {
+      setResult("이겼습니다! 🎉");
+    } else {
+      setResult("졌습니다 😢");
+    }
+  };
 
-    // 10명 랜덤 시뮬레이션
-    const others = Array.from({ length: 10 }, () =>
-      choices[Math.floor(Math.random() * 3)]
-    );
+  // 버튼을 누르면 사람이 직접 선택
+  const handlePlayerChoice = (choice) => {
+    setPlayerChoice(choice);
 
-    const wins = others.filter((o) => isWin(choice, o)).length;
-    setWinCount(wins);
+    // 컴퓨터는 여전히 랜덤으로 선택
+    const randomChoice = choices[Math.floor(Math.random() * choices.length)];
+    setComputerChoice(randomChoice);
+
+    determineWinner(choice, randomChoice);
   };
 
   return (
-    <div className="app">
-      <h1 className="title">✊✌️🖐 가위바위보 게임</h1>
-
-      <div className="buttons">
-        {choices.map((c) => (
-          <button key={c} onClick={() => handleChoice(c)} className="choice-btn">
-            {c}
+    <div className="App">
+      <h1>가위바위보 게임 ✊✌️🖐️</h1>
+      <div>
+        {choices.map((choice) => (
+          <button key={choice} onClick={() => handlePlayerChoice(choice)}>
+            {choice}
           </button>
         ))}
       </div>
-
-      {myChoice && (
-        <div className="result-card">
-          <p className="my-choice">✨ 내 선택: {myChoice}</p>
-          <p className="win-count">내가 이긴 횟수: {winCount}</p>
-        </div>
-      )}
+      <div>
+        <p>내 선택: {playerChoice}</p>
+        <p>컴퓨터 선택: {computerChoice}</p>
+        <h2>{result}</h2>
+      </div>
     </div>
   );
 }
 
 export default App;
-
